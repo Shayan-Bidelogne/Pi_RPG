@@ -11,12 +11,12 @@ config_version=5
 [application]
 
 config/name="Pi RPG"
-run/main_scene="res://src/maps/overworld.tscn"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+run/main_scene="uid://dgw53gdb07il"
+config/features=PackedStringArray("4.5", "GL Compatibility")
 
 [autoload]
 
-Global="*res://src/autoload/global.gd"
+Global="*res://scripts/global.gd"
 
 [debug]
 
@@ -33,9 +33,12 @@ window/stretch/mode="canvas_items"
 [file_customization]
 
 folder_colors={
-"res://assets/": "red",
-"res://assets/sprites/": "orange",
-"res://src/": "blue"
+"res://addons/": "teal",
+"res://characters/": "red",
+"res://prefabs/": "yellow",
+"res://resources/": "pink",
+"res://scenes/": "purple",
+"res://sprites/": "orange"
 }
 
 [input]

@@ -1,0 +1,42 @@
+[gd_resource type="SpriteFrames" load_steps=9 format=3 uid="uid://1wo6kqdwlm0r"]
+
+[ext_resource type="Texture2D" uid="uid://kt53reg0yxpd" path="res://characters/mobs/Snail/snail_Animation 1_0.png" id="1_8gy2g"]
+[ext_resource type="Texture2D" uid="uid://s4ipecos3wh4" path="res://characters/mobs/Snail/snail_Animation 1_1.png" id="2_cvayu"]
+[ext_resource type="Texture2D" uid="uid://dp6fcrfsbyd3g" path="res://characters/mobs/Snail/snail_Animation 1_2.png" id="3_m8l14"]
+[ext_resource type="Texture2D" uid="uid://cy25prgxnpqpu" path="res://characters/mobs/Snail/snail_Animation 1_3.png" id="4_svmww"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wdg1t"]
+atlas = ExtResource("1_8gy2g")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rr1g2"]
+atlas = ExtResource("2_cvayu")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_osgml"]
+atlas = ExtResource("3_m8l14")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0jedf"]
+atlas = ExtResource("4_svmww")
+region = Rect2(0, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wdg1t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rr1g2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_osgml")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0jedf")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 5.0
+}]

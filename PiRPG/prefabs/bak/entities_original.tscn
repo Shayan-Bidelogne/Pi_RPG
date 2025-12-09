@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://c0njpmm30kmkw"]
+
+[ext_resource type="PackedScene" uid="uid://bxbbu2a4pgk10" path="res://prefabs/characters/player/player.tscn" id="1_wgm17"]
+[ext_resource type="Script" uid="uid://bva6fcv3l2j8r" path="res://scripts/camera/camera.gd" id="2_jpk3s"]
+[ext_resource type="PackedScene" uid="uid://bee61jec5doox" path="res://prefabs/characters/mobs/Aligator.tscn" id="3_3pacd"]
+[ext_resource type="PackedScene" uid="uid://dqkkmrcxp6ht7" path="res://prefabs/characters/mobs/snail.tscn" id="4_wfflk"]
+[ext_resource type="PackedScene" uid="uid://8a2r7npu40ps" path="res://prefabs/characters/mobs/harpy.tscn" id="5_7nr1q"]
+
+[node name="Entities" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_wgm17")]
+z_index = 1
+position = Vector2(200, 96)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(2, 2)
+script = ExtResource("2_jpk3s")
+map_ref = NodePath("../../..")
+
+[node name="Aligator" parent="." instance=ExtResource("3_3pacd")]
+position = Vector2(350, 210)
+
+[node name="Aligator2" parent="." instance=ExtResource("3_3pacd")]
+position = Vector2(420, 180)
+
+[node name="Snail" parent="." instance=ExtResource("4_wfflk")]
+position = Vector2(257, 226)
+
+[node name="CharacterBody2D" parent="." instance=ExtResource("5_7nr1q")]
+position = Vector2(147, 105)
