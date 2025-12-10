@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://dtedkwemqij3i"]
+
+[ext_resource type="Script" uid="uid://cfng4jur507cq" path="res://scripts/enemies/EnemyBase.gd" id="1_elew5"]
+[ext_resource type="SpriteFrames" uid="uid://yn2e6ga1wbqc" path="res://resources/sprite_frames/demon.tres" id="2_2fmmo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d0s11"]
+size = Vector2(16, 16)
+
+[node name="Demon" type="AnimatableBody2D"]
+script = ExtResource("1_elew5")
+metadata/_custom_type_script = "uid://cfng4jur507cq"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_2fmmo")
+animation = &"idle_down"
+offset = Vector2(0, -8)
+
+[node name="IdleTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="WalkTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="ray_r" type="RayCast2D" parent="."]
+target_position = Vector2(12, 0)
+collide_with_areas = true
+
+[node name="ray_l" type="RayCast2D" parent="."]
+target_position = Vector2(-12, 0)
+collide_with_areas = true
+
+[node name="ray_u" type="RayCast2D" parent="."]
+target_position = Vector2(0, -12)
+collide_with_areas = true
+
+[node name="ray_d" type="RayCast2D" parent="."]
+target_position = Vector2(0, 12)
+collide_with_areas = true
+
+[node name="coll" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_d0s11")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

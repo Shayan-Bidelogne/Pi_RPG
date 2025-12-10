@@ -1,4 +1,4 @@
-class_name EnemyBase extends Node2D
+class_name EnemyBase extends AnimatableBody2D
 
 # |----- Disclaimer -------
 # | If it feels like it's missing stuff, that's because I probably
@@ -23,6 +23,12 @@ var state = states.IDLE
 
 @onready var tile_size = Global.TILE_SIZE
 
+# RAYS
+@onready var ray_u = $ray_u
+@onready var ray_d = $ray_d
+@onready var ray_l = $ray_l
+@onready var ray_r = $ray_r
+
 var last_direction = Vector2.ZERO
 var picked_direction = Vector2.ZERO
 
@@ -42,12 +48,19 @@ func _physics_process(_delta: float) -> void:
 	# But notice it's decision will be stored on a "picked_direction" and
 	# "last_direction" for future purposes and not just movement; Animation.
 	var direction = Vector2.ZERO
+	var rays = [ray_u.is_colliding(), ray_d.is_colliding(),
+				ray_l.is_colliding(), ray_r.is_colliding()]
+	var rand_pick_idx = -1
 
 	# Basic state machine "shift". Also check Timers time left so it won't be picking
 	# a new direction/position every frame he's idle.
 	if state == states.IDLE and not $IdleTimer.time_left:
 		var movements = [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]
-		picked_direction = movements[randi() % movements.size()]
+		rand_pick_idx = randi() % movements.size()
+		if rays[rand_pick_idx]:
+			while rays[rand_pick_idx]:
+				rand_pick_idx = randi() % movements.size()
+		picked_direction = movements[rand_pick_idx]
 		direction = global_position.snappedf(tile_size) + picked_direction * tile_size
 
 		var tween = create_tween()
@@ -75,12 +88,13 @@ func _physics_process(_delta: float) -> void:
 	# map, and you will see it working properly.
 	# Also notice the scene tree on the level scene "test". It's "modular" enough so you can
 	# Delete all aligators/mobs and have 1 for your debug.
-	var ray_cast = global_position.snappedf(tile_size) + (picked_direction * tile_size/2)
-	$ray.target_position = to_local(ray_cast)
+	#var ray_cast = global_position.snappedf(tile_size) + (picked_direction * tile_size/2)
+	#$ray.target_position = to_local(ray_cast)
 	$coll.global_position = last_direction.snappedf(tile_size)
-	if $ray.is_colliding():
-		state = states.IDLE
-		direction = global_position
+	#if rand_pick_idx >= 0:
+		#if rays..is_colliding()
+		#state = states.IDLE
+		#direction = global_position
 		#return
 
 # Cool function to cut the work of doing it manually. Also notice I'm using it

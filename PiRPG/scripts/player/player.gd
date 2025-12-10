@@ -12,16 +12,23 @@ enum MOVEMENT_KEYS {LEFT, RIGHT, DOWN, UP}
 enum states {IDLE, WALK}
 var state = states.IDLE
 
-@export var idle_timeout = 0.2
-@export var walk_timeout = 0.2
+@export var idle_timeout = 0.1
+@export var walk_timeout = 0.1
 
 @onready var animation_sprite: AnimatedSprite2D = $AnimatedSprite2D
+
+# RAYS
+@onready var ray_u = $ray_u
+@onready var ray_d = $ray_d
+@onready var ray_l = $ray_l
+@onready var ray_r = $ray_r
 
 @onready var tile_size = Global.TILE_SIZE
 
 var last_direction = Vector2.ZERO
 var picked_direction = Vector2.ZERO
 var has_next_move = false
+var is_looping_anim = false
 
 func _ready() -> void:
 	global_position = global_position.snappedf(tile_size*2)
@@ -29,17 +36,17 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	
-	# instead of direction, it's "input_vector". Very "ok" code.
+	# Instead of direction, it's "input_vector". Very "ok" code.
 	var input_vector = Vector2.ZERO
 	
 	# I tried remaking the original source code and somewhat it does work ok.
 	# It might not be "proper" but it's fine for now and better yet, it's easy 
 	# to change if needed later on.
 	var keys: Array[bool] = [
-		Input.is_action_pressed("ui_left"),
-		Input.is_action_pressed("ui_right"),
-		Input.is_action_pressed("ui_down"),
-		Input.is_action_pressed("ui_up")
+		Input.is_action_pressed("ui_left") and !ray_l.is_colliding(),
+		Input.is_action_pressed("ui_right") and !ray_r.is_colliding(),
+		Input.is_action_pressed("ui_down") and !ray_d.is_colliding(),
+		Input.is_action_pressed("ui_up") and !ray_u.is_colliding()
 	]
 	
 	# Simple "query" so you pick the first input that was found on the keymap.
@@ -54,8 +61,8 @@ func _physics_process(_delta: float) -> void:
 	# !!! This is basically what the enum does but with tags. So instead of having
 	# !!! constants with values addressed to tag them, enums are just that.
 	# !!! Enum example: 0, 1, 2 -> enum states { IDLE, WALKING, ATTACKING }
-	var idx = keys.find(true)
-	match idx:
+	var keys_idx = keys.find(true)
+	match keys_idx:
 		MOVEMENT_KEYS.LEFT: input_vector = Vector2.LEFT
 		MOVEMENT_KEYS.RIGHT: input_vector = Vector2.RIGHT
 		MOVEMENT_KEYS.DOWN: input_vector = Vector2.DOWN
@@ -74,16 +81,7 @@ func _physics_process(_delta: float) -> void:
 	# and on the next check for a collision, then you will filter and avoid further bugs.
 	var probable_movement = global_position.snappedf(tile_size) + (input_vector * tile_size)
 	if input_vector != Vector2.ZERO and not has_next_move:
-		var ray_cast = global_position.snappedf(tile_size) + (input_vector * tile_size/2)
-		$ray.target_position = to_local(ray_cast)
-		$coll.global_position = ray_cast
-		$ray.position = to_local(ray_cast)
 		has_next_move = true
-		return
-	
-	if $ray.is_colliding():
-		state = states.IDLE
-		has_next_move = false
 		return
 	
 	# Same stuff form the enemyBase, but with a few wrongdoings as I was trying to figure
@@ -100,28 +98,37 @@ func _physics_process(_delta: float) -> void:
 	#
 	# This mean we need to avoid at all cost "copling" code and even more making it
 	# more complex than it should. Make stuff simple and try connect the dots. That's what we need here.
-	if state == states.IDLE and input_vector.length() > 0.3 and not $IdleTimer.time_left and has_next_move:
+	if state == states.IDLE:
+		if is_looping_anim and keys_idx < 0:
+			state = states.IDLE
+			try_animation(animation_sprite, get_animation_string(picked_direction))
+			is_looping_anim = true
 		
-		picked_direction = input_vector
-		
-		var tween = create_tween()
-		tween.tween_property(
-			self, "position", #Who and what to manipulate
-			probable_movement, #Where to go
-			walk_timeout #Time interval in seconds to get there
-		)
-		#tween.finished.connect(_on_walk_timer_timeout)
+		if input_vector and not $IdleTimer.time_left and has_next_move:
+			
+			picked_direction = input_vector
+			
+			var tween = create_tween()
+			tween.tween_property(
+				self, "position", #Who and what to manipulate
+				probable_movement, #Where to go
+				walk_timeout*2 #Time interval in seconds to get there
+			)
+			#tween.finished.connect(_on_walk_timer_timeout)
 
-		state = states.WALK
-		$WalkTimer.start(walk_timeout/2)
-		has_next_move = false
+			state = states.WALK
+			$WalkTimer.start(walk_timeout)
+			has_next_move = false
 	elif state == states.WALK:
-		var animation_name = get_animation_string(picked_direction)
-		if animation_sprite.sprite_frames.has_animation(animation_name):
-			animation_sprite.play(animation_name)
-	else:
-		state = states.IDLE
-		has_next_move = false
+		try_animation(animation_sprite, get_animation_string(picked_direction))
+		is_looping_anim = true
+
+# That's an shortcut function I made for the script. This is also
+# good for a Tool class later on.
+func try_animation(anim_sprite: AnimatedSprite2D, anim_name: String):
+	var spriteframes = anim_sprite.sprite_frames
+	if spriteframes.has_animation(anim_name):
+		anim_sprite.play(anim_name)
 
 # Same code. I actually think I'll make a "tool class" just for these kind of codes.
 # It's reusable and it's been repeated.
@@ -148,11 +155,8 @@ func get_animation_string(direction: Vector2) -> String:
 func _on_walk_timer_timeout() -> void:
 	state = states.IDLE
 	has_next_move = false
-
-	$IdleTimer.start(idle_timeout/2)
+	$IdleTimer.start(idle_timeout)
 
 # This was just a work around to make animation cycle. It's bugging but it works for now.
 func _on_animated_sprite_2d_animation_looped() -> void:
-	var animation_name = get_animation_string(picked_direction)
-	if animation_sprite.sprite_frames.has_animation(animation_name):
-		animation_sprite.play(animation_name)
+	is_looping_anim = false
