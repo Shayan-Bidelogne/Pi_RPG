@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0lu3618hxdxe"]
+
+[ext_resource type="Script" uid="uid://cfng4jur507cq" path="res://scripts/enemies/EnemyBase.gd" id="1_r3jij"]
+[ext_resource type="SpriteFrames" uid="uid://1wo6kqdwlm0r" path="res://resources/sprite_frames/snail.tres" id="2_l4jxs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6vret"]
+size = Vector2(16, 16)
+
+[node name="Snail" type="AnimatableBody2D"]
+script = ExtResource("1_r3jij")
+metadata/_custom_type_script = "uid://cfng4jur507cq"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_l4jxs")
+animation = &"walk_up"
+centered = false
+offset = Vector2(-8, -8)
+
+[node name="ray_r" type="RayCast2D" parent="."]
+target_position = Vector2(12, 0)
+collide_with_areas = true
+
+[node name="ray_l" type="RayCast2D" parent="."]
+target_position = Vector2(-12, 0)
+collide_with_areas = true
+
+[node name="ray_u" type="RayCast2D" parent="."]
+target_position = Vector2(0, -12)
+collide_with_areas = true
+
+[node name="ray_d" type="RayCast2D" parent="."]
+target_position = Vector2(0, 12)
+collide_with_areas = true
+
+[node name="coll" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_6vret")
+disabled = true
+
+[node name="IdleTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="WalkTimer" type="Timer" parent="."]
+one_shot = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://bmcermplqr7pn"]
+[gd_scene load_steps=44 format=3 uid="uid://bmcermplqr7pn"]
 
 [ext_resource type="Script" uid="uid://cfng4jur507cq" path="res://scripts/enemies/EnemyBase.gd" id="1_7ggx4"]
 [ext_resource type="Texture2D" uid="uid://d3uh28olree2w" path="res://characters/mobs/Aligator/Mob_Alligator_idle_front.png" id="2_vuiia"]
@@ -9,9 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://cduk74rpilfhb" path="res://characters/mobs/Aligator/Mob_Alligator_walking_left (1).png" id="7_obltt"]
 [ext_resource type="Texture2D" uid="uid://ckohsgevy2050" path="res://characters/mobs/Aligator/Mob_Alligator_walking_right (1).png" id="8_dufha"]
 [ext_resource type="Texture2D" uid="uid://45ypqhshb5r3" path="res://characters/mobs/Aligator/Mob_Alligator_walking_back.png" id="9_0om13"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_jopy2"]
-size = Vector2(24, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5f4iu"]
 atlas = ExtResource("2_vuiia")
@@ -286,10 +283,6 @@ size = Vector2(16, 16)
 [node name="EnemyBase" type="AnimatableBody2D"]
 script = ExtResource("1_7ggx4")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_jopy2")
-disabled = true
-
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pi6iv")
 animation = &"walk_right"
@@ -301,8 +294,20 @@ one_shot = true
 [node name="WalkTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="ray" type="RayCast2D" parent="."]
-target_position = Vector2(0, 0)
+[node name="ray_r" type="RayCast2D" parent="."]
+target_position = Vector2(12, 0)
+collide_with_areas = true
+
+[node name="ray_l" type="RayCast2D" parent="."]
+target_position = Vector2(-12, 0)
+collide_with_areas = true
+
+[node name="ray_u" type="RayCast2D" parent="."]
+target_position = Vector2(0, -12)
+collide_with_areas = true
+
+[node name="ray_d" type="RayCast2D" parent="."]
+target_position = Vector2(0, 12)
 collide_with_areas = true
 
 [node name="coll" type="CollisionShape2D" parent="."]
